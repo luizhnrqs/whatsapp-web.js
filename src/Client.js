@@ -880,6 +880,19 @@ class Client extends EventEmitter {
      * @returns {Promise<Message>} Message that was just sent
      */
     async sendMessage(chatId, content, options = {}) {
+        const isChannel = /@\w*newsletter\b/.test(chatId);
+
+        if (isChannel && [
+            options.sendMediaAsDocument, options.quotedMessageId, 
+            options.parseVCards, options.isViewOnce,
+            content instanceof Location, content instanceof Contact,
+            content instanceof Buttons, content instanceof List,
+            Array.isArray(content) && content.length > 0 && content[0] instanceof Contact
+        ].includes(true)) {
+            console.warn('The message type is currently not supported for sending in channels,\nthe supported message types are: text, image, sticker, gif, video, voice and poll.');
+            return null;
+        }
+        
         if (options.mentions) {
             !Array.isArray(options.mentions) && (options.mentions = [options.mentions]);
             if (options.mentions.some((possiblyContact) => possiblyContact instanceof Contact)) {

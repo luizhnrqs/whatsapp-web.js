@@ -11,6 +11,7 @@ module.exports = {
     PrivateChat: require('./PrivateChat'),
     PrivateContact: require('./PrivateContact'),
     GroupNotification: require('./GroupNotification'),
+    Channel: require('./Channel'),
     Label: require('./Label.js'),
     Order: require('./Order'),
     Product: require('./Product'),
