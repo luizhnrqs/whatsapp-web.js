@@ -25,7 +25,7 @@ exports.LoadUtils = () => {
     };
 
     window.WWebJS.sendMessage = async (chat, content, options = {}) => {
-        const isChannel = chat.isNewsletter;
+        const isChannel = chat.id.server == "newsletter";
         
         let attOptions = {};
         if (options.attachment) {

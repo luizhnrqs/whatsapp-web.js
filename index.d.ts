@@ -661,6 +661,99 @@ declare namespace WAWebJS {
         reply: (content: MessageContent, options?: MessageSendOptions) => Promise<Message>,
 
     }
+
+    export interface Channel {
+        /** ID that represents the channel */
+        id: {
+            server: string;
+            user: string;
+            _serialized: string;
+        };
+        /** Title of the channel */
+        name: string;
+        /** The channel description */
+        description: string;
+        /** Indicates if it is a Channel */
+        isChannel: boolean;
+        /** Indicates if it is a Group */
+        isGroup: boolean;
+        /** Indicates if the channel is readonly */
+        isReadOnly: boolean;
+        /** Amount of messages unread */
+        unreadCount: number;
+        /** Unix timestamp for when the last activity occurred */
+        timestamp: number;
+        /** Indicates if the channel is muted or not */
+        isMuted: boolean;
+        /** Unix timestamp for when the mute expires */
+        muteExpiration: number;
+        /** Last message in the channel */
+        lastMessage: Message | undefined;
+
+        /** Gets the subscribers of the channel (only those who are in your contact list) */
+        getSubscribers(limit?: number): Promise<{contact: Contact, role: string}[]>;
+        /** Updates the channel subject */
+        setSubject(newSubject: string): Promise<boolean>;
+        /** Updates the channel description */
+        setDescription(newDescription: string): Promise<boolean>;
+        /** Updates the channel profile picture */
+        setProfilePicture(newProfilePicture: MessageMedia): Promise<boolean>;
+        /**
+         * Updates available reactions to use in the channel
+         * 
+         * Valid values for passing to the method are:
+         * 0 for NONE reactions to be avaliable
+         * 1 for BASIC reactions to be available: 👍, ❤️, 😂, 😮, 😢, 🙏
+         * 2 for ALL reactions to be available
+         */
+        setReactionSetting(reactionCode: number): Promise<boolean>;
+        /** Mutes the channel */
+        mute(): Promise<boolean>;
+        /** Unmutes the channel */
+        unmute(): Promise<boolean>;
+        /** Sends a message to this channel */
+        sendMessage(content: string|MessageMedia, options?: MessageSendChannelOptions): Promise<Message>;
+        /** Sets the channel as seen */
+        sendSeen(): Promise<boolean>;
+        /** Sends a channel admin invitation to a user, allowing them to become an admin of the channel */
+        sendChannelAdminInvite(chatId: string, options?: { comment?: string }): Promise<boolean>;
+        /** Accepts a channel admin invitation and promotes the current user to a channel admin */
+        acceptChannelAdminInvite(): Promise<boolean>;
+        /** Revokes a channel admin invitation sent to a user by a channel owner */
+        revokeChannelAdminInvite(userId: string): Promise<boolean>;
+        /** Demotes a channel admin to a regular subscriber (can be used also for self-demotion) */
+        demoteChannelAdmin(userId: string): Promise<boolean>;
+        /** Loads channel messages, sorted from earliest to latest */
+        fetchMessages: (searchOptions: MessageSearchOptions) => Promise<Message[]>;
+        /**
+         * Transfers a channel ownership to another user.
+         * Note: the user you are transferring the channel ownership to must be a channel admin.
+         */
+        transferChannelOwnership(newOwnerId: string, options?: TransferChannelOwnershipOptions): Promise<boolean>;
+        /** Deletes the channel you created */
+        deleteChannel(): Promise<boolean>;
+    }
+
+    /** Options for transferring a channel ownership to another user */
+    export interface TransferChannelOwnershipOptions {
+        /**
+         * If true, after the channel ownership is being transferred to another user,
+         * the current user will be dismissed as a channel admin and will become to a channel subscriber.
+         */
+        shouldDismissSelfAsAdmin?: boolean
+    }
+
+    /** Options for sending a message */
+    export interface MessageSendChannelOptions {
+        /** Image or videos caption */
+        caption?: string
+        /** User IDs of user that will be mentioned in the message */
+        mentions?: string[]
+        /** Image or video to be sent */
+        media?: MessageMedia
+        /** Extra options */
+        extra?: any
+    }
     
     /** whatsapp web url */
     export const WhatsWebURL: string
